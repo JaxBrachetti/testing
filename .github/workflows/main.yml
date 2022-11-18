@@ -31,18 +31,18 @@ jobs:
           author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           body:
             This is to show automatic PR creation
-          token: ${{ github.token }}
+          token: ${{ secrets.GH_TOKEN }}
           delete-branch: false
 
       - name: Approve Pull Request
         uses: juliangruber/approve-pull-request-action@v1
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GH_TOKEN }}
           number: ${{ steps.inf-pr-test.outputs.pull-request-number }}
 
       - name: Merge Pull request
         uses: juliangruber/merge-pull-request-action@v1
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GH_TOKEN }}
           number: ${{ steps.inf-pr-test.outputs.pull-request-number }}
           method: squash

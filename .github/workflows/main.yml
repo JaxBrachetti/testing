@@ -1,0 +1,48 @@
+name: testing
+
+on:
+  push:
+    branches:
+      - staging-test
+  
+jobs:
+  merge-dev-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Extract git commit data
+        uses: rlespinasse/git-commit-data-action@v1.x
+
+      - name: Update author information
+        run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
+
+      - name: Raise PR
+        id: inf-pr-test
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: "production-test"
+          base: main
+          title: "Merge staging-test into production-test test"
+          committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
+          author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
+          body:
+            This is to show automatic PR creation
+          token: ${{ github.token }}
+          delete-branch: false
+
+      - name: Approve Pull Request
+        uses: juliangruber/approve-pull-request-action@v1
+        with:
+          github-token: ${{ github.token }}
+          number: ${{ steps.inf-pr-test.outputs.pull-request-number }}
+
+      - name: Merge Pull request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ github.token }}
+          number: ${{ steps.inf-pr-test.outputs.pull-request-number }}
+          method: squash

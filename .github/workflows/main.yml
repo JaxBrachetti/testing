@@ -34,12 +34,6 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           delete-branch: false
 
-      - name: Approve Pull Request
-        uses: juliangruber/approve-pull-request-action@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          number: ${{ steps.inf-pr-test.outputs.pull-request-number }}
-
       - name: Merge Pull request
         uses: juliangruber/merge-pull-request-action@v1
         with:
